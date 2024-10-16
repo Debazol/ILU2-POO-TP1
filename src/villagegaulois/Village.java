@@ -9,10 +9,13 @@ public class Village {
 	private Chef chef;
 	private Gaulois[] villageois;
 	private int nbVillageois = 0;
+	private Marche marche;
+	private int taille_marche;
 
-	public Village(String nom, int nbVillageoisMaximum) {
+	public Village(String nom, int nbVillageoisMaximum,int taille_marche) {
 		this.nom = nom;
 		villageois = new Gaulois[nbVillageoisMaximum];
+		marche= new Marche(taille_marche);
 	}
 
 	public String getNom() {
@@ -56,6 +59,45 @@ public class Village {
 			}
 		}
 		return chaine.toString();
+	}
+	
+	public String installerVendeur(Gaulois vendeur, String produit,int nbProduit) {
+		StringBuilder chaine = new StringBuilder(vendeur.getNom()+
+				" cherche un endroit pour vendre "+nbProduit+" "+produit+"\n");
+		
+		chaine.append("Le vendeur"+vendeur.getNom()+" vend des "+produit+
+				" à l'étal n° "+ marche.trouverVendeur(vendeur));
+		return chaine.toString();	
+		}
+	
+	public String rechercherVendeursProduit(String produit) {
+		StringBuilder vendeurexist = new StringBuilder("Les vendeurs qui proposent des "
+				+produit+" sont ");
+		StringBuilder novendeur = new StringBuilder("Il n'y a pas de vendeur qui propose des "
+				+produit+" au marché.");
+		
+		
+		int vendeurtrouv=0;
+		int i=0;
+		while(i<taille_marche) {
+		//for (int i=0;i<taille_marche;i++) {
+			i++;
+			if (marche.etals[i].contientProduit(produit)==true) {
+				vendeurtrouv++;
+				vendeurexist.append("- "+marche.etals[i].getVendeur().getNom()
+						+"\n");
+			}
+		}
+		if (vendeurtrouv==1) {
+			StringBuilder univendeur = new StringBuilder("Seul le vendeur "+marche.etals[i].getVendeur().getNom()+
+					"propose des "+produit+" au marché");
+			return vendeurexist.toString();
+		}
+		if (vendeurtrouv>1) {
+			return vendeurexist.toString();
+		}
+		
+		return novendeur.toString();
 	}
 	private static class Marche{
 		private Etal[] etals;
@@ -108,9 +150,18 @@ public class Village {
 		}
 		
 		public String afficherMarche() {
+			StringBuilder chaine = new StringBuilder();
+			int nbEtalVide=nbEtal;
 			for (int i=0; i<nbEtal;++i) {
-				System.out.println();
-			
+				
+				nbEtalVide--;
+				etals[i].afficherEtal();
+				}
+			chaine.append("Il reste "+nbEtalVide+"non utilisés dans le marché.");
+			return chaine.toString();
 		}
+		
+			
 	}
+	
 }
